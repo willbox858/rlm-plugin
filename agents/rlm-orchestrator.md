@@ -1,7 +1,7 @@
 ---
 name: rlm-orchestrator
 description: Processes arbitrarily large contexts using Recursive Language Model techniques. Use when input exceeds 100K characters, when dense processing of every part is needed, when aggregating across many files or sections, or when the user mentions RLM or recursive processing.
-tools: Read, Bash, Grep, Glob
+tools: Bash
 model: opus
 permissionMode: bypassPermissions
 maxTurns: 30

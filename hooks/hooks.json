@@ -1,0 +1,16 @@
+{
+  "description": "RLM guardrails — prevents orchestrator agents from reading more than the peek limit, enforcing recursive delegation.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/validate-peek-size.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
