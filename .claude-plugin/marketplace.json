@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "Recursive Language Model plugin for Claude Code — large-context processing, documentation, planning, TDD implementation, bugfixing, and code quality analysis with built-in guardrail hooks.",
-    "version": "1.2.0"
+    "version": "1.2.1"
   },
   "plugins": [
     {
       "name": "rlm",
       "source": "./",
       "description": "Agentic workflow framework built on Recursive Language Models (RLM). 20 skills for large-context processing, documentation, planning, TDD implementation, end-to-end bugfixing, and code quality analysis. Includes guardrail hooks enforcing recursive delegation limits.",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "author": {
         "name": "willbox858"
       },

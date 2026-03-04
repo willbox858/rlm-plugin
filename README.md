@@ -16,29 +16,30 @@ claude plugin add https://github.com/willbox858/rlm-plugin
 
 | Skill | Category | Description |
 |-------|----------|-------------|
-| `/rlm` | Core Processing | Process contexts too large for the context window via recursive decomposition |
-| `/gather-context` | Context Gathering | Recursive codebase search across files and directories with budget tracking |
-| `/describe` | Documentation | Generate prose descriptions of code or architecture |
-| `/diagram` | Documentation | Generate Mermaid diagrams from code or conversation |
-| `/document` | Documentation | Comprehensive prose and diagram documentation |
-| `/distill` | Documentation | Extract decisions, requirements, and key points from session logs or files |
-| `/design` | Design & Analysis | Generate technical design documents from conversation and code |
-| `/research` | Design & Analysis | Produce codebase research reports |
-| `/validate` | Design & Analysis | Detect drift between code and design documents |
-| `/review` | Design & Analysis | Quality and consistency review of code or documentation |
-| `/diagnose` | Design & Analysis | Root cause analysis from symptoms and error traces |
-| `/plan-feature` | Planning | Break a feature into implementation stories |
-| `/plan-sprint` | Planning | Sprint planning from feature plans |
-| `/plan-epic` | Planning | Epic planning with milestones and dependency graphs |
-| `/implement` | Implementation | Execute a feature plan via TDD with iterative verification in a git worktree |
-| `/update` | Implementation | Regenerate a stale derived document by re-running its original pipeline |
+| `/rlm-process` | Core Processing | Process contexts too large for the context window via recursive decomposition |
+| `/rlm-map` | Context Gathering | Recursive codebase search across files and directories with budget tracking |
+| `/rlm-describe` | Documentation | Generate prose descriptions of code or architecture |
+| `/rlm-diagram` | Documentation | Generate Mermaid diagrams from code or conversation |
+| `/rlm-document` | Documentation | Comprehensive prose and diagram documentation |
+| `/rlm-distill` | Documentation | Extract decisions, requirements, and key points from session logs or files |
+| `/rlm-design` | Design & Analysis | Generate technical design documents from conversation and code |
+| `/rlm-research` | Design & Analysis | Produce codebase research reports |
+| `/rlm-validate` | Design & Analysis | Detect drift between code and design documents |
+| `/rlm-review` | Design & Analysis | Quality and consistency review of code or documentation |
+| `/rlm-diagnose` | Design & Analysis | Root cause analysis from symptoms and error traces |
+| `/rlm-plan-feature` | Planning | Break a feature into implementation stories |
+| `/rlm-plan-sprint` | Planning | Sprint planning from feature plans |
+| `/rlm-plan-epic` | Planning | Epic planning with milestones and dependency graphs |
+| `/rlm-implement` | Implementation | Execute a feature plan via TDD with iterative verification in a git worktree |
+| `/rlm-update` | Implementation | Regenerate a stale derived document by re-running its original pipeline |
+| `/rlm-bugfix` | Implementation | Diagnose and fix bugs end-to-end with regression tests |
 
 ## Architecture
 
 The plugin is organized into three layers:
 
 - **Skills** are the user-facing entry points (the slash commands listed above). Each skill prepares inputs and dispatches one or more agents.
-- **Agents** do the actual work. The core RLM agents (`rlm-orchestrator` and `rlm-child`) recursively split large inputs, delegate to parallel sub-agents, and aggregate results -- no single agent ever reads the full input. Implementation agents (`implementation-orchestrator`, `implementation-worker`, `test-writer`, `verifier`) run the TDD loop.
+- **Agents** do the actual work. The core RLM agents (`rlm-process` and `rlm-child`) recursively split large inputs, delegate to parallel sub-agents, and aggregate results -- no single agent ever reads the full input. Implementation agents (`implementation-orchestrator`, `implementation-worker`, `test-writer`, `verifier`) run the TDD loop.
 - **Configs** drive `launch.sh`, the unified launcher that spawns all sub-agents with the correct environment, schema, and stdin behavior.
 
 The recursive decomposition pattern: the orchestrator peeks at the first and last 1000 bytes of input, decides how to split it, spawns child agents in parallel, and merges their structured JSON results. Children at max depth process their chunk directly; children below max depth re-split and recurse.
