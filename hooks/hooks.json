@@ -1,3 +1,0 @@
-{
-  "description": "RLM plugin hooks. Agent-specific guardrails are defined in each agent's frontmatter, not here. This file is kept for any future global hooks."
-}
