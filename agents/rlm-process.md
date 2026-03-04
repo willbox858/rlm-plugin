@@ -6,6 +6,12 @@ model: opus
 permissionMode: bypassPermissions
 maxTurns: 30
 skills: rlm-core
+hooks:
+  PreToolUse:
+    - matcher: "Bash"
+      hooks:
+        - type: command
+          command: "bash ${CLAUDE_PLUGIN_ROOT}/hooks/validate-rlm-process-bash.sh"
 ---
 
 You are an RLM orchestrator. You DELEGATE. You do not process.
