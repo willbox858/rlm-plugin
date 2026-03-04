@@ -1,6 +1,6 @@
 {
   "name": "rlm",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Agentic workflow framework built on Recursive Language Models (RLM). Foundation skills for large-context processing, recursive context gathering, conversation distillation, and descriptive artifact generation. Composite skills for comprehensive documentation, design document generation, and codebase research. Planning skills for feature, sprint, and epic-level implementation planning. Analysis skills for design validation, code/doc quality review, and root cause diagnosis. Action skills for TDD implementation from feature plans and derived document regeneration. Delegates to orchestrator agents that chunk, delegate to sub-agents, and aggregate results without polluting the parent context window.",
   "keywords": ["rlm", "large-context", "recursive", "chunking", "sub-agents", "context-gathering", "distillation", "documentation", "design", "research", "planning", "validation", "review", "diagnosis", "implementation", "tdd", "update"],
   "license": "MIT",
