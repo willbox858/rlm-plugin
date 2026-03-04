@@ -57,16 +57,16 @@ Resolve launcher and configs:
 ```bash
 if [ -n "$RLM_ROOT" ]; then
   LAUNCHER="$RLM_ROOT/launch.sh"
-  WORKER_CONFIG="$RLM_ROOT/configs/impl-worker.json"
-  TEST_WRITER_CONFIG="$RLM_ROOT/configs/impl-test-writer.json"
-  VERIFIER_CONFIG="$RLM_ROOT/configs/impl-verifier.json"
+  WORKER_CONFIG="$RLM_ROOT/internal/impl-worker.json"
+  TEST_WRITER_CONFIG="$RLM_ROOT/internal/impl-test-writer.json"
+  VERIFIER_CONFIG="$RLM_ROOT/internal/impl-verifier.json"
 elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
   LAUNCHER="$CLAUDE_PLUGIN_ROOT/launch.sh"
-  WORKER_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/impl-worker.json"
-  TEST_WRITER_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/impl-test-writer.json"
-  VERIFIER_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/impl-verifier.json"
+  WORKER_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/impl-worker.json"
+  TEST_WRITER_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/impl-test-writer.json"
+  VERIFIER_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/impl-verifier.json"
 else
-  WORKER_CONFIG="$(find . -path '*/.claude/RLM/configs/impl-worker.json' -print -quit 2>/dev/null)"
+  WORKER_CONFIG="$(find . -path '*/.claude/RLM/internal/impl-worker.json' -print -quit 2>/dev/null)"
   LAUNCHER="$(dirname "$(dirname "$WORKER_CONFIG")")/launch.sh"
   TEST_WRITER_CONFIG="$(dirname "$WORKER_CONFIG")/impl-test-writer.json"
   VERIFIER_CONFIG="$(dirname "$WORKER_CONFIG")/impl-verifier.json"

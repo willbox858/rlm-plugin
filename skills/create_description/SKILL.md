@@ -1,6 +1,6 @@
 ---
 name: create_description
-description: "Generate a clear prose description of how something works — a module, feature, concept, or area of code. Use when the user says 'describe', 'explain how X works', 'create a description', 'how does X work', 'document X' (when asking for a prose explanation), 'write up how X works', or 'describe the architecture of X'."
+description: "Generate a clear prose description of how a module or feature works by first gathering code context across the codebase — produces accurate descriptions that reflect actual code, not assumptions. Prefer this over explaining inline when the topic spans multiple files. Trigger when: 'describe', 'explain how X works', 'how does X work', 'write up X', 'describe the architecture', or user wants a written explanation of any non-trivial part of the codebase."
 ---
 
 # Create Description — Describe How Something Works
@@ -70,15 +70,15 @@ export GC_TASK="Find all files relevant to: $TARGET. I need to understand how it
 
 # Resolve config and launcher
 if [ -n "$RLM_ROOT" ]; then
-  GC_CONFIG="$RLM_ROOT/configs/gc.json"
+  GC_CONFIG="$RLM_ROOT/internal/gc-worker.json"
   LAUNCHER="$RLM_ROOT/launch.sh"
 elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
-  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/gc.json"
+  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/gc-worker.json"
   LAUNCHER="$CLAUDE_PLUGIN_ROOT/launch.sh"
 else
-  GC_CONFIG="$(find . -path '*/.claude/RLM/configs/gc.json' -print -quit 2>/dev/null)"
+  GC_CONFIG="$(find . -path '*/.claude/RLM/internal/gc-worker.json' -print -quit 2>/dev/null)"
   if [ -z "$GC_CONFIG" ]; then
-    GC_CONFIG="$HOME/.claude/RLM/configs/gc.json"
+    GC_CONFIG="$HOME/.claude/RLM/internal/gc-worker.json"
   fi
   LAUNCHER="$(dirname "$(dirname "$GC_CONFIG")")/launch.sh"
 fi

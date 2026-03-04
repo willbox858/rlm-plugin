@@ -1,6 +1,6 @@
 ---
 name: diagnose
-description: "Investigate failures and find root causes by analyzing code, design docs, and error output. Use when the user says 'diagnose', 'why is this failing', 'root cause', 'debug this', 'what's causing', 'investigate this error', 'why does this break', 'failure analysis', 'what went wrong', or wants to trace symptoms back to their underlying cause."
+description: "Systematic root cause analysis that traces failures across multiple components, cross-references design docs, and produces a structured diagnosis report. Prefer this over inline debugging when the failure spans multiple files, isn't obvious from the error message, or when initial fix attempts haven't worked. Trigger when: user has a confusing error or unexpected behavior, 'why is this failing', 'debug this', 'root cause', 'what's causing X', 'what went wrong', test failures need investigation, or user seems stuck on a bug."
 ---
 
 # Diagnose — Root Cause Analysis from Symptoms
@@ -83,15 +83,15 @@ export GC_TASK="Find files relevant to this failure: $SYMPTOM_SUMMARY. The error
 
 # Resolve config and launcher
 if [ -n "$RLM_ROOT" ]; then
-  GC_CONFIG="$RLM_ROOT/configs/gc.json"
+  GC_CONFIG="$RLM_ROOT/internal/gc-worker.json"
   LAUNCHER="$RLM_ROOT/launch.sh"
 elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
-  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/gc.json"
+  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/gc-worker.json"
   LAUNCHER="$CLAUDE_PLUGIN_ROOT/launch.sh"
 else
-  GC_CONFIG="$(find . -path '*/.claude/RLM/configs/gc.json' -print -quit 2>/dev/null)"
+  GC_CONFIG="$(find . -path '*/.claude/RLM/internal/gc-worker.json' -print -quit 2>/dev/null)"
   if [ -z "$GC_CONFIG" ]; then
-    GC_CONFIG="$HOME/.claude/RLM/configs/gc.json"
+    GC_CONFIG="$HOME/.claude/RLM/internal/gc-worker.json"
   fi
   LAUNCHER="$(dirname "$(dirname "$GC_CONFIG")")/launch.sh"
 fi

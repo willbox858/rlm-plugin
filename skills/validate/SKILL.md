@@ -1,6 +1,6 @@
 ---
 name: validate
-description: "Check code against design documents and report drift. Use when the user says 'validate', 'check against design', 'drift analysis', 'does the code match the design', 'design compliance', 'verify implementation matches spec', 'check conformance', 'are we following the design', or wants to compare implementation against documented intent."
+description: "Check implementation against design documents and report specific drift findings. Trigger when: 'validate', 'does code match design', 'drift analysis', 'check conformance', 'are we following the spec', user wants to verify implementation aligns with design docs, or after significant code changes before release."
 ---
 
 # Validate — Code vs Design Drift Analysis
@@ -147,15 +147,15 @@ export GC_TASK="Find all files relevant to: $VALIDATE_TOPIC. I need to understan
 
 # Resolve config and launcher
 if [ -n "$RLM_ROOT" ]; then
-  GC_CONFIG="$RLM_ROOT/configs/gc.json"
+  GC_CONFIG="$RLM_ROOT/internal/gc-worker.json"
   LAUNCHER="$RLM_ROOT/launch.sh"
 elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
-  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/gc.json"
+  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/gc-worker.json"
   LAUNCHER="$CLAUDE_PLUGIN_ROOT/launch.sh"
 else
-  GC_CONFIG="$(find . -path '*/.claude/RLM/configs/gc.json' -print -quit 2>/dev/null)"
+  GC_CONFIG="$(find . -path '*/.claude/RLM/internal/gc-worker.json' -print -quit 2>/dev/null)"
   if [ -z "$GC_CONFIG" ]; then
-    GC_CONFIG="$HOME/.claude/RLM/configs/gc.json"
+    GC_CONFIG="$HOME/.claude/RLM/internal/gc-worker.json"
   fi
   LAUNCHER="$(dirname "$(dirname "$GC_CONFIG")")/launch.sh"
 fi

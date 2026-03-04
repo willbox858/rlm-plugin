@@ -1,6 +1,6 @@
 ---
 name: distill
-description: "Extract decisions, requirements, key points, and state from conversation history or provided files. Use when resuming work after a break, catching up on past sessions, preparing context for /design, or when the user says 'distill', 'catch me up', 'what did we decide', 'summarize our conversation', or 'extract decisions'."
+description: "Extract decisions, requirements, key points, and open questions from long conversation history or large documents using RLM for thorough processing. Prefer this over inline summarization when the conversation is long, when precision matters (exact decisions, not paraphrases), or when preparing structured input for /design or /plan-feature. Trigger when: resuming after a break, 'catch me up', 'what did we decide', 'summarize our conversation', 'extract decisions', processing meeting notes or specs."
 ---
 
 # Distill — Extract Decisions and Key Points

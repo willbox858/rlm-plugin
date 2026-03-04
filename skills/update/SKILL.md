@@ -1,6 +1,6 @@
 ---
 name: update
-description: "Regenerate a stale derived document from current sources. Re-runs the original skill's gathering and synthesis patterns with fresh code and conversation context, then presents a diff. Use when the user says 'update', 'refresh this doc', 'regenerate', 'update the design doc', 'this doc is stale', 'sync the docs', or wants to bring a derived document up to date with current code."
+description: "Regenerate a stale derived document by re-running the original skill's pipeline with fresh code context, presenting old-vs-new diff. Trigger when: 'update', 'refresh this doc', 'regenerate', 'this doc is stale', 'sync the docs', or any derived document (from /design, /document, /research, etc.) needs updating."
 ---
 
 # Update — Regenerate Stale Derived Documents
@@ -142,15 +142,15 @@ The approach varies by document type.
 
 ```bash
 if [ -n "$RLM_ROOT" ]; then
-  GC_CONFIG="$RLM_ROOT/configs/gc.json"
+  GC_CONFIG="$RLM_ROOT/internal/gc-worker.json"
   LAUNCHER="$RLM_ROOT/launch.sh"
 elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
-  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/gc.json"
+  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/gc-worker.json"
   LAUNCHER="$CLAUDE_PLUGIN_ROOT/launch.sh"
 else
-  GC_CONFIG="$(find . -path '*/.claude/RLM/configs/gc.json' -print -quit 2>/dev/null)"
+  GC_CONFIG="$(find . -path '*/.claude/RLM/internal/gc-worker.json' -print -quit 2>/dev/null)"
   if [ -z "$GC_CONFIG" ]; then
-    GC_CONFIG="$HOME/.claude/RLM/configs/gc.json"
+    GC_CONFIG="$HOME/.claude/RLM/internal/gc-worker.json"
   fi
   LAUNCHER="$(dirname "$(dirname "$GC_CONFIG")")/launch.sh"
 fi

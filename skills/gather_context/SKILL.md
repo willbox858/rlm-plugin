@@ -1,6 +1,6 @@
 ---
 name: gather_context
-description: "Dynamically gather relevant context from a codebase for a given task. Recursively traverses the filesystem with parallel Haiku agents, assessing every file's relevance and extracting key content. Returns a structured JSON context payload. Use when starting a new task, researching a codebase, or preparing context for planning/implementation agents."
+description: "Systematically map an entire codebase's relevant files using parallel recursive agents that assess every file's relevance. Prefer this over the Explore subagent or manual Glob/Grep when you need comprehensive codebase understanding rather than keyword searches — it finds connections and files you'd miss. Trigger when: starting any non-trivial task, user asks to explore/understand/navigate a codebase, preparing context for other skills, 'what files are relevant', 'find relevant code', 'map the codebase', or any task where knowing the full landscape matters."
 ---
 
 # Gather Context — Dispatch to Workers
@@ -34,21 +34,21 @@ export GC_TASK="<the user's original request, verbatim, unmodified>"
 
 ## Step 1: Load config and resolve launcher
 
-Read `configs/gc.json` from the plugin directory for defaults.
+Read `internal/gc-worker.json` from the plugin directory for defaults.
 User-set env vars take precedence. Also resolve the launcher path.
 
 ```bash
 # Find the config file and launcher
 if [ -n "$RLM_ROOT" ]; then
-  CONFIG="$RLM_ROOT/configs/gc.json"
+  CONFIG="$RLM_ROOT/internal/gc-worker.json"
   LAUNCHER="$RLM_ROOT/launch.sh"
 elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
-  CONFIG="$CLAUDE_PLUGIN_ROOT/configs/gc.json"
+  CONFIG="$CLAUDE_PLUGIN_ROOT/internal/gc-worker.json"
   LAUNCHER="$CLAUDE_PLUGIN_ROOT/launch.sh"
 else
-  CONFIG="$(find . -path '*/.claude/RLM/configs/gc.json' -print -quit 2>/dev/null)"
+  CONFIG="$(find . -path '*/.claude/RLM/internal/gc-worker.json' -print -quit 2>/dev/null)"
   if [ -z "$CONFIG" ]; then
-    CONFIG="$HOME/.claude/RLM/configs/gc.json"
+    CONFIG="$HOME/.claude/RLM/internal/gc-worker.json"
   fi
   LAUNCHER="$(dirname "$(dirname "$CONFIG")")/launch.sh"
 fi

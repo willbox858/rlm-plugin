@@ -1,6 +1,6 @@
 ---
 name: research
-description: "Research a codebase topic and produce a structured findings report. Use when the user says 'research', 'investigate', 'analyze the codebase for', 'what's the state of X', 'audit', 'survey', 'how is X used across the codebase', 'find all patterns of', 'codebase analysis', or wants a thorough exploration of a topic with findings and recommendations."
+description: "Produce a structured research report with findings, patterns, gaps, and recommendations by gathering broad codebase context and synthesizing via RLM. Prefer this over the Explore subagent or manual searches when the user needs analysis and synthesis, not just search results. Trigger when: 'how is X done in this codebase', 'what's the state of X', 'investigate', 'analyze', 'audit', 'survey', 'find all patterns of', user asks about cross-cutting concerns, or any question requiring codebase-wide analysis with structured conclusions."
 ---
 
 # Research — Codebase Research Summary
@@ -71,15 +71,15 @@ export GC_TASK="Find all files relevant to: $RESEARCH_TOPIC. Cast a wide net —
 
 # Resolve config and launcher
 if [ -n "$RLM_ROOT" ]; then
-  GC_CONFIG="$RLM_ROOT/configs/gc.json"
+  GC_CONFIG="$RLM_ROOT/internal/gc-worker.json"
   LAUNCHER="$RLM_ROOT/launch.sh"
 elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
-  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/gc.json"
+  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/gc-worker.json"
   LAUNCHER="$CLAUDE_PLUGIN_ROOT/launch.sh"
 else
-  GC_CONFIG="$(find . -path '*/.claude/RLM/configs/gc.json' -print -quit 2>/dev/null)"
+  GC_CONFIG="$(find . -path '*/.claude/RLM/internal/gc-worker.json' -print -quit 2>/dev/null)"
   if [ -z "$GC_CONFIG" ]; then
-    GC_CONFIG="$HOME/.claude/RLM/configs/gc.json"
+    GC_CONFIG="$HOME/.claude/RLM/internal/gc-worker.json"
   fi
   LAUNCHER="$(dirname "$(dirname "$GC_CONFIG")")/launch.sh"
 fi

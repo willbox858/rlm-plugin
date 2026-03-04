@@ -1,6 +1,6 @@
 ---
 name: implement
-description: "Execute a feature plan via TDD with iterative verification. Creates a git worktree, writes tests from acceptance criteria, implements code to pass tests, and iterates until all tests/build/lint pass. Use when the user says 'implement', 'implement this plan', 'build this feature', 'execute this plan', 'code this up', 'implement the plan for X', 'TDD this feature', or wants to turn a feature plan into working, tested code."
+description: "Execute a feature plan via TDD in an isolated git worktree — writes tests first, implements code, and iterates until all tests/build/lint pass. Prefer this over writing code directly when: a feature plan exists, the change needs tests, or the user wants worktree isolation. Trigger when: 'implement', 'build this feature', 'code this up', 'execute the plan', 'TDD this', user wants to turn a plan into working tested code, or any multi-file implementation."
 ---
 
 # Implement — Execute Feature Plan via TDD
@@ -148,15 +148,15 @@ export GC_TASK="Find all files relevant to: $IMPL_TOPIC. I need to understand th
 
 # Standard config resolution
 if [ -n "$RLM_ROOT" ]; then
-  GC_CONFIG="$RLM_ROOT/configs/gc.json"
+  GC_CONFIG="$RLM_ROOT/internal/gc-worker.json"
   LAUNCHER="$RLM_ROOT/launch.sh"
 elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
-  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/gc.json"
+  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/gc-worker.json"
   LAUNCHER="$CLAUDE_PLUGIN_ROOT/launch.sh"
 else
-  GC_CONFIG="$(find . -path '*/.claude/RLM/configs/gc.json' -print -quit 2>/dev/null)"
+  GC_CONFIG="$(find . -path '*/.claude/RLM/internal/gc-worker.json' -print -quit 2>/dev/null)"
   if [ -z "$GC_CONFIG" ]; then
-    GC_CONFIG="$HOME/.claude/RLM/configs/gc.json"
+    GC_CONFIG="$HOME/.claude/RLM/internal/gc-worker.json"
   fi
   LAUNCHER="$(dirname "$(dirname "$GC_CONFIG")")/launch.sh"
 fi

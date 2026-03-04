@@ -1,6 +1,6 @@
 ---
 name: plan-sprint
-description: "Create a sprint plan from existing feature plans, designs, and code context. Use when the user says 'plan the sprint', 'sprint planning', 'what should we work on next', 'plan-sprint', 'prioritize stories', 'sprint backlog', 'next sprint', or wants to organize stories from feature plans into a prioritized, capacity-aware sprint."
+description: "Create a capacity-aware sprint plan by consolidating stories from multiple feature plans into a prioritized backlog. Trigger when: 'plan the sprint', 'sprint planning', 'what should we work on next', 'prioritize stories', 'sprint backlog', or user wants to organize multiple /plan-feature outputs into an ordered sprint."
 ---
 
 # Plan Sprint — Sprint Planning from Feature Plans + Code State
@@ -125,15 +125,15 @@ export GC_TASK="Assess the current state of the codebase for sprint planning. Fo
 
 # Resolve config and launcher
 if [ -n "$RLM_ROOT" ]; then
-  GC_CONFIG="$RLM_ROOT/configs/gc.json"
+  GC_CONFIG="$RLM_ROOT/internal/gc-worker.json"
   LAUNCHER="$RLM_ROOT/launch.sh"
 elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
-  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/gc.json"
+  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/gc-worker.json"
   LAUNCHER="$CLAUDE_PLUGIN_ROOT/launch.sh"
 else
-  GC_CONFIG="$(find . -path '*/.claude/RLM/configs/gc.json' -print -quit 2>/dev/null)"
+  GC_CONFIG="$(find . -path '*/.claude/RLM/internal/gc-worker.json' -print -quit 2>/dev/null)"
   if [ -z "$GC_CONFIG" ]; then
-    GC_CONFIG="$HOME/.claude/RLM/configs/gc.json"
+    GC_CONFIG="$HOME/.claude/RLM/internal/gc-worker.json"
   fi
   LAUNCHER="$(dirname "$(dirname "$GC_CONFIG")")/launch.sh"
 fi

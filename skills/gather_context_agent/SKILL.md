@@ -152,12 +152,12 @@ If NEEDED > MAX, activate **batch mode**:
 # Resolve launcher and config — RLM_ROOT is exported by the launcher
 if [ -n "$RLM_ROOT" ]; then
   LAUNCHER="$RLM_ROOT/launch.sh"
-  CONFIG="$RLM_ROOT/configs/gc.json"
+  CONFIG="$RLM_ROOT/internal/gc-worker.json"
 elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
   LAUNCHER="$CLAUDE_PLUGIN_ROOT/launch.sh"
-  CONFIG="$CLAUDE_PLUGIN_ROOT/configs/gc.json"
+  CONFIG="$CLAUDE_PLUGIN_ROOT/internal/gc-worker.json"
 else
-  CONFIG="$(find . -path '*/.claude/RLM/configs/gc.json' -print -quit 2>/dev/null)"
+  CONFIG="$(find . -path '*/.claude/RLM/internal/gc-worker.json' -print -quit 2>/dev/null)"
   LAUNCHER="$(dirname "$(dirname "$CONFIG")")/launch.sh"
 fi
 TMPDIR="/tmp/gc_$(echo "$DIR" | md5sum | cut -c1-8)"

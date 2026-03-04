@@ -9,7 +9,7 @@ RLM enables Claude Code to handle inputs that exceed its context window (100K+ c
 ## Installation
 
 ```bash
-claude plugin add https://github.com/YOUR_USERNAME/rlm-plugin
+claude plugin add https://github.com/willbox858/rlm-plugin
 ```
 
 ## Skills

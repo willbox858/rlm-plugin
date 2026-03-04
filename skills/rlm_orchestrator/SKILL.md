@@ -52,7 +52,7 @@ export RLM_TASK="<the user's original request, verbatim, unmodified>"
 ## Step 3: Dispatch to the orchestrator agent
 
 The orchestrator handles all other config loading internally (reads
-`configs/rlm.json` from its plugin directory, exports remaining
+`internal/rlm-child.json` from its plugin directory, exports remaining
 env vars). You do NOT need to parse config or set any env vars
 besides RLM_TASK.
 
@@ -101,7 +101,7 @@ If the result is large, peek with `head`/`tail` first.
 ## What happens inside
 
 You don't manage this -- the orchestrator handles it:
-1. Loads config from `configs/rlm.json`, exports env vars
+1. Loads config from `internal/rlm-child.json`, exports env vars
 2. Explores context with `wc`, `head`, `tail`, `grep`
 3. Filters with standard tools
 4. Chunks and delegates to rlm-child agents via `launch.sh`

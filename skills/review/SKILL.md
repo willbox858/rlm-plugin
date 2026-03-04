@@ -1,6 +1,6 @@
 ---
 name: review
-description: "Quality and consistency review of code or documentation. Use when the user says 'review', 'code review', 'review this', 'check quality', 'quality review', 'consistency check', 'review for best practices', 'review the code in', 'what's wrong with this code', 'audit code quality', or wants a thorough review of code or docs with findings and recommendations."
+description: "Structured quality review producing severity-rated findings and actionable recommendations by gathering code context and checking against codebase conventions. Prefer this over inline analysis when reviewing more than one file or when a persistent review artifact matters (pre-merge, pre-release). Trigger when: 'review', 'code review', 'check quality', 'what's wrong with this code', 'audit', user wants to review a module/feature/PR, or asks for best practice compliance."
 ---
 
 # Review — Quality & Consistency Review
@@ -74,15 +74,15 @@ Resolve config and launcher once (shared by both branches):
 
 ```bash
 if [ -n "$RLM_ROOT" ]; then
-  GC_CONFIG="$RLM_ROOT/configs/gc.json"
+  GC_CONFIG="$RLM_ROOT/internal/gc-worker.json"
   LAUNCHER="$RLM_ROOT/launch.sh"
 elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
-  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/gc.json"
+  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/gc-worker.json"
   LAUNCHER="$CLAUDE_PLUGIN_ROOT/launch.sh"
 else
-  GC_CONFIG="$(find . -path '*/.claude/RLM/configs/gc.json' -print -quit 2>/dev/null)"
+  GC_CONFIG="$(find . -path '*/.claude/RLM/internal/gc-worker.json' -print -quit 2>/dev/null)"
   if [ -z "$GC_CONFIG" ]; then
-    GC_CONFIG="$HOME/.claude/RLM/configs/gc.json"
+    GC_CONFIG="$HOME/.claude/RLM/internal/gc-worker.json"
   fi
   LAUNCHER="$(dirname "$(dirname "$GC_CONFIG")")/launch.sh"
 fi

@@ -1,6 +1,6 @@
 ---
 name: plan-epic
-description: "Create an epic-level plan with milestones, dependencies, and phasing strategy. Use when the user says 'plan the epic', 'roadmap for X', 'milestone planning', 'plan-epic', 'epic plan', 'project plan', 'phasing strategy', 'what are the milestones', or wants to organize features into milestones with a dependency graph and critical path analysis."
+description: "Create an epic-level roadmap with milestones, dependency graph, and phasing strategy with Mermaid visualization. Trigger when: 'plan the epic', 'roadmap', 'milestone planning', 'project plan', 'phasing strategy', 'what are the milestones', or user wants to organize a large initiative spanning multiple features into a phased plan with critical path analysis."
 ---
 
 # Plan Epic — Milestones, Dependencies, and Phasing
@@ -110,15 +110,15 @@ export GC_TASK="Provide a high-level overview of the codebase for epic-level pla
 
 # Resolve config and launcher
 if [ -n "$RLM_ROOT" ]; then
-  GC_CONFIG="$RLM_ROOT/configs/gc.json"
+  GC_CONFIG="$RLM_ROOT/internal/gc-worker.json"
   LAUNCHER="$RLM_ROOT/launch.sh"
 elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
-  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/gc.json"
+  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/gc-worker.json"
   LAUNCHER="$CLAUDE_PLUGIN_ROOT/launch.sh"
 else
-  GC_CONFIG="$(find . -path '*/.claude/RLM/configs/gc.json' -print -quit 2>/dev/null)"
+  GC_CONFIG="$(find . -path '*/.claude/RLM/internal/gc-worker.json' -print -quit 2>/dev/null)"
   if [ -z "$GC_CONFIG" ]; then
-    GC_CONFIG="$HOME/.claude/RLM/configs/gc.json"
+    GC_CONFIG="$HOME/.claude/RLM/internal/gc-worker.json"
   fi
   LAUNCHER="$(dirname "$(dirname "$GC_CONFIG")")/launch.sh"
 fi

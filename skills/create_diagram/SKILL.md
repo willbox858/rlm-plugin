@@ -1,6 +1,6 @@
 ---
 name: create_diagram
-description: "Generate a Mermaid diagram (with brief prose explanation) of a system, module, flow, or concept. Use when the user says 'diagram', 'create a diagram', 'show me a diagram of', 'visualize', 'draw the architecture', 'sequence diagram', 'flowchart', 'state diagram', 'class diagram', 'ER diagram', 'mermaid diagram', 'diagram the X', or 'draw a diagram of X'."
+description: "Generate an accurate Mermaid diagram by first gathering code context — ensures the diagram reflects actual code structure, not guesses. Prefer this over writing Mermaid inline when the diagram needs to be accurate to the codebase. Trigger when: 'diagram', 'visualize', 'draw', 'flowchart', 'sequence diagram', 'architecture diagram', 'show me how X connects', or user wants any visual representation of code structure, data flow, or architecture."
 ---
 
 # Create Diagram — Generate a Mermaid Diagram
@@ -103,15 +103,15 @@ export GC_TASK="Find all files relevant to: $TARGET. I need to understand the co
 
 # Resolve config and launcher
 if [ -n "$RLM_ROOT" ]; then
-  GC_CONFIG="$RLM_ROOT/configs/gc.json"
+  GC_CONFIG="$RLM_ROOT/internal/gc-worker.json"
   LAUNCHER="$RLM_ROOT/launch.sh"
 elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
-  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/gc.json"
+  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/gc-worker.json"
   LAUNCHER="$CLAUDE_PLUGIN_ROOT/launch.sh"
 else
-  GC_CONFIG="$(find . -path '*/.claude/RLM/configs/gc.json' -print -quit 2>/dev/null)"
+  GC_CONFIG="$(find . -path '*/.claude/RLM/internal/gc-worker.json' -print -quit 2>/dev/null)"
   if [ -z "$GC_CONFIG" ]; then
-    GC_CONFIG="$HOME/.claude/RLM/configs/gc.json"
+    GC_CONFIG="$HOME/.claude/RLM/internal/gc-worker.json"
   fi
   LAUNCHER="$(dirname "$(dirname "$GC_CONFIG")")/launch.sh"
 fi

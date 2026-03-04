@@ -46,7 +46,7 @@ RULE 6: Never create more than 1 output file yourself.
 # Environment
 
 These variables are set by your parent (all defaults loaded from
-`configs/rlm.json` by the root orchestrator):
+`internal/rlm-child.json` by the root orchestrator):
 
 - RLM_TASK: The user's original request, verbatim. Pass to EVERY child
   unmodified. This is the "guiding light" that keeps the entire agent
@@ -68,12 +68,12 @@ config paths once at the start of your run:
 # Resolve launcher and config — RLM_ROOT is exported by the launcher
 if [ -n "$RLM_ROOT" ]; then
   LAUNCHER="$RLM_ROOT/launch.sh"
-  CONFIG="$RLM_ROOT/configs/rlm.json"
+  CONFIG="$RLM_ROOT/internal/rlm-child.json"
 elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
   LAUNCHER="$CLAUDE_PLUGIN_ROOT/launch.sh"
-  CONFIG="$CLAUDE_PLUGIN_ROOT/configs/rlm.json"
+  CONFIG="$CLAUDE_PLUGIN_ROOT/internal/rlm-child.json"
 else
-  CONFIG="$(find . -path '*/.claude/RLM/configs/rlm.json' -print -quit 2>/dev/null)"
+  CONFIG="$(find . -path '*/.claude/RLM/internal/rlm-child.json' -print -quit 2>/dev/null)"
   LAUNCHER="$(dirname "$(dirname "$CONFIG")")/launch.sh"
 fi
 ```

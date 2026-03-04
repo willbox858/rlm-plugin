@@ -1,6 +1,6 @@
 ---
 name: document
-description: "Generate comprehensive documentation combining prose description and Mermaid diagram for a module, feature, or concept. Use when the user says 'document X fully', 'comprehensive docs for', 'document with diagrams', 'full documentation', 'write complete docs', 'document everything about X', or wants both prose explanation and visual diagram in one artifact."
+description: "Generate comprehensive documentation with both prose and Mermaid diagram by gathering code context first — ensures accuracy across multi-file systems. Prefer this over writing docs inline when documenting anything that spans multiple files or when both explanation and visual are needed. Trigger when: 'document X', 'write docs for', 'documentation', 'explain X with diagrams', 'full docs', or user wants to understand/document a module, feature, or system."
 ---
 
 # Document — Comprehensive Prose + Diagram
@@ -106,15 +106,15 @@ export GC_TASK="Find all files relevant to: $TARGET. I need to understand how it
 
 # Resolve config and launcher
 if [ -n "$RLM_ROOT" ]; then
-  GC_CONFIG="$RLM_ROOT/configs/gc.json"
+  GC_CONFIG="$RLM_ROOT/internal/gc-worker.json"
   LAUNCHER="$RLM_ROOT/launch.sh"
 elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
-  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/gc.json"
+  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/gc-worker.json"
   LAUNCHER="$CLAUDE_PLUGIN_ROOT/launch.sh"
 else
-  GC_CONFIG="$(find . -path '*/.claude/RLM/configs/gc.json' -print -quit 2>/dev/null)"
+  GC_CONFIG="$(find . -path '*/.claude/RLM/internal/gc-worker.json' -print -quit 2>/dev/null)"
   if [ -z "$GC_CONFIG" ]; then
-    GC_CONFIG="$HOME/.claude/RLM/configs/gc.json"
+    GC_CONFIG="$HOME/.claude/RLM/internal/gc-worker.json"
   fi
   LAUNCHER="$(dirname "$(dirname "$GC_CONFIG")")/launch.sh"
 fi
@@ -267,15 +267,15 @@ Resolve the RLM config and launcher (if not already resolved):
 
 ```bash
 if [ -n "$RLM_ROOT" ]; then
-  RLM_CONFIG="$RLM_ROOT/configs/rlm.json"
+  RLM_CONFIG="$RLM_ROOT/internal/rlm-child.json"
   LAUNCHER="$RLM_ROOT/launch.sh"
 elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
-  RLM_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/rlm.json"
+  RLM_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/rlm-child.json"
   LAUNCHER="$CLAUDE_PLUGIN_ROOT/launch.sh"
 else
-  RLM_CONFIG="$(find . -path '*/.claude/RLM/configs/rlm.json' -print -quit 2>/dev/null)"
+  RLM_CONFIG="$(find . -path '*/.claude/RLM/internal/rlm-child.json' -print -quit 2>/dev/null)"
   if [ -z "$RLM_CONFIG" ]; then
-    RLM_CONFIG="$HOME/.claude/RLM/configs/rlm.json"
+    RLM_CONFIG="$HOME/.claude/RLM/internal/rlm-child.json"
   fi
   LAUNCHER="$(dirname "$(dirname "$RLM_CONFIG")")/launch.sh"
 fi

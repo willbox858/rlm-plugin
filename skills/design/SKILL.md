@@ -1,6 +1,6 @@
 ---
 name: design
-description: "Generate a technical design document from conversation history and code context. Use when the user says 'design doc', 'write a design', 'create a design document', 'design for X', 'technical design', 'architecture proposal', 'RFC', 'design review document', or wants to turn discussion and code into a structured design proposal."
+description: "Generate a technical design document by distilling conversation history and gathering code context in parallel, producing a persistent design artifact. Prefer this over writing inline or using EnterPlanMode when the goal is a reusable design doc that captures decisions, requirements, and architecture from discussion. Trigger when: 'design doc', 'write a design', 'RFC', 'technical design', 'architecture proposal', 'formalize our discussion', user wants to turn conversation into a structured design, or is planning a non-trivial feature."
 ---
 
 # Design — Technical Design Document from Conversation + Code
@@ -146,15 +146,15 @@ export GC_TASK="Find all files relevant to: $DESIGN_TOPIC. I need to understand 
 
 # Resolve config and launcher
 if [ -n "$RLM_ROOT" ]; then
-  GC_CONFIG="$RLM_ROOT/configs/gc.json"
+  GC_CONFIG="$RLM_ROOT/internal/gc-worker.json"
   LAUNCHER="$RLM_ROOT/launch.sh"
 elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
-  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/gc.json"
+  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/gc-worker.json"
   LAUNCHER="$CLAUDE_PLUGIN_ROOT/launch.sh"
 else
-  GC_CONFIG="$(find . -path '*/.claude/RLM/configs/gc.json' -print -quit 2>/dev/null)"
+  GC_CONFIG="$(find . -path '*/.claude/RLM/internal/gc-worker.json' -print -quit 2>/dev/null)"
   if [ -z "$GC_CONFIG" ]; then
-    GC_CONFIG="$HOME/.claude/RLM/configs/gc.json"
+    GC_CONFIG="$HOME/.claude/RLM/internal/gc-worker.json"
   fi
   LAUNCHER="$(dirname "$(dirname "$GC_CONFIG")")/launch.sh"
 fi

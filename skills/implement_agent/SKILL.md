@@ -153,21 +153,21 @@ All agents resolve the launcher and configs using the standard pattern:
 ```bash
 if [ -n "$RLM_ROOT" ]; then
   LAUNCHER="$RLM_ROOT/launch.sh"
-  WORKER_CONFIG="$RLM_ROOT/configs/impl-worker.json"
-  TEST_WRITER_CONFIG="$RLM_ROOT/configs/impl-test-writer.json"
-  VERIFIER_CONFIG="$RLM_ROOT/configs/impl-verifier.json"
-  GC_CONFIG="$RLM_ROOT/configs/gc.json"
-  RLM_CONFIG="$RLM_ROOT/configs/rlm.json"
+  WORKER_CONFIG="$RLM_ROOT/internal/impl-worker.json"
+  TEST_WRITER_CONFIG="$RLM_ROOT/internal/impl-test-writer.json"
+  VERIFIER_CONFIG="$RLM_ROOT/internal/impl-verifier.json"
+  GC_CONFIG="$RLM_ROOT/internal/gc-worker.json"
+  RLM_CONFIG="$RLM_ROOT/internal/rlm-child.json"
 elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
   LAUNCHER="$CLAUDE_PLUGIN_ROOT/launch.sh"
-  WORKER_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/impl-worker.json"
-  TEST_WRITER_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/impl-test-writer.json"
-  VERIFIER_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/impl-verifier.json"
-  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/gc.json"
-  RLM_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/rlm.json"
+  WORKER_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/impl-worker.json"
+  TEST_WRITER_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/impl-test-writer.json"
+  VERIFIER_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/impl-verifier.json"
+  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/gc-worker.json"
+  RLM_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/rlm-child.json"
 else
   # Fallback: find configs relative to project
-  WORKER_CONFIG="$(find . -path '*/.claude/RLM/configs/impl-worker.json' -print -quit 2>/dev/null)"
+  WORKER_CONFIG="$(find . -path '*/.claude/RLM/internal/impl-worker.json' -print -quit 2>/dev/null)"
   CONFIGS_DIR="$(dirname "$WORKER_CONFIG")"
   LAUNCHER="$(dirname "$CONFIGS_DIR")/launch.sh"
   TEST_WRITER_CONFIG="$CONFIGS_DIR/impl-test-writer.json"

@@ -38,36 +38,36 @@ echo "RLM_TASK: $RLM_TASK"
 
 ## Step 1: Load config and resolve launcher
 
-Read `configs/rlm.json` from this plugin's directory and export
+Read `internal/rlm-child.json` from this plugin's directory and export
 env vars. User-set env vars take precedence (the `:-` fallbacks).
 Also resolve the launcher script path.
 
 ```bash
 if [ -n "$RLM_ROOT" ]; then
-  CONFIG="$RLM_ROOT/configs/rlm.json"
+  CONFIG="$RLM_ROOT/internal/rlm-child.json"
   LAUNCHER="$RLM_ROOT/launch.sh"
 elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
-  CONFIG="$CLAUDE_PLUGIN_ROOT/configs/rlm.json"
+  CONFIG="$CLAUDE_PLUGIN_ROOT/internal/rlm-child.json"
   LAUNCHER="$CLAUDE_PLUGIN_ROOT/launch.sh"
 else
-  CONFIG="$(find . -path '*/.claude/RLM/configs/rlm.json' -print -quit 2>/dev/null)"
+  CONFIG="$(find . -path '*/.claude/RLM/internal/rlm-child.json' -print -quit 2>/dev/null)"
   if [ -z "$CONFIG" ]; then
-    CONFIG="$HOME/.claude/RLM/configs/rlm.json"
+    CONFIG="$HOME/.claude/RLM/internal/rlm-child.json"
   fi
   LAUNCHER="$(dirname "$(dirname "$CONFIG")")/launch.sh"
 fi
 
 export RLM_DEPTH="${RLM_DEPTH:-0}"
-export RLM_MAX_DEPTH="${RLM_MAX_DEPTH:-$(jq -r '.env_defaults.RLM_MAX_DEPTH' "$CONFIG")}"
-export RLM_CHUNK_LINES="${RLM_CHUNK_LINES:-$(jq -r '.env_defaults.RLM_CHUNK_LINES' "$CONFIG")}"
-export RLM_CHUNK_BYTES="${RLM_CHUNK_BYTES:-$(jq -r '.env_defaults.RLM_CHUNK_BYTES' "$CONFIG")}"
-export RLM_OVERLAP_BYTES="${RLM_OVERLAP_BYTES:-$(jq -r '.env_defaults.RLM_OVERLAP_BYTES' "$CONFIG")}"
-export RLM_MAX_PARALLELISM="${RLM_MAX_PARALLELISM:-$(jq -r '.env_defaults.RLM_MAX_PARALLELISM' "$CONFIG")}"
+export RLM_MAX_DEPTH="${RLM_MAX_DEPTH:-$(jq -r '.env_defaults.RLM_MAX_DEPTH // "2"' "$CONFIG")}"
+export RLM_CHUNK_LINES="${RLM_CHUNK_LINES:-$(jq -r '.env_defaults.RLM_CHUNK_LINES // "2000"' "$CONFIG")}"
+export RLM_CHUNK_BYTES="${RLM_CHUNK_BYTES:-$(jq -r '.env_defaults.RLM_CHUNK_BYTES // "80000"' "$CONFIG")}"
+export RLM_OVERLAP_BYTES="${RLM_OVERLAP_BYTES:-$(jq -r '.env_defaults.RLM_OVERLAP_BYTES // "2000"' "$CONFIG")}"
+export RLM_MAX_PARALLELISM="${RLM_MAX_PARALLELISM:-$(jq -r '.env_defaults.RLM_MAX_PARALLELISM // "0"' "$CONFIG")}"
 ```
 
 In practice: find the config file by searching for
-`.claude/RLM/configs/rlm.json` relative to the project root or
-home directory, then export. The launcher (`launch.sh`) is one level up from `configs/`.
+`.claude/RLM/internal/rlm-child.json` relative to the project root or
+home directory, then export. The launcher (`launch.sh`) is one level up from `internal/`.
 
 ## Step 2: Save stdin and peek
 

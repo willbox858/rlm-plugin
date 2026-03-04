@@ -1,6 +1,6 @@
 ---
 name: plan-feature
-description: "Break a feature design into implementation stories and tasks. Use when the user says 'plan this feature', 'break this into stories', 'implementation plan for X', 'plan-feature', 'what stories do we need', 'task breakdown for X', 'plan the implementation', or wants to turn a design into actionable implementation stories with acceptance criteria."
+description: "Break a feature into implementation stories with acceptance criteria, dependencies, and sizing — produces a persistent plan artifact that /implement can execute. Prefer this over EnterPlanMode when the goal is a reusable implementation plan, not a one-time approach discussion. Trigger when: 'plan this feature', 'break into stories', 'implementation plan', 'what do we need to build', 'task breakdown', or after /design when moving toward implementation."
 ---
 
 # Plan Feature — Implementation Stories from Design + Code
@@ -153,15 +153,15 @@ export GC_TASK="Find all files relevant to: $FEATURE_TOPIC. I need to understand
 
 # Resolve config and launcher
 if [ -n "$RLM_ROOT" ]; then
-  GC_CONFIG="$RLM_ROOT/configs/gc.json"
+  GC_CONFIG="$RLM_ROOT/internal/gc-worker.json"
   LAUNCHER="$RLM_ROOT/launch.sh"
 elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
-  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/configs/gc.json"
+  GC_CONFIG="$CLAUDE_PLUGIN_ROOT/internal/gc-worker.json"
   LAUNCHER="$CLAUDE_PLUGIN_ROOT/launch.sh"
 else
-  GC_CONFIG="$(find . -path '*/.claude/RLM/configs/gc.json' -print -quit 2>/dev/null)"
+  GC_CONFIG="$(find . -path '*/.claude/RLM/internal/gc-worker.json' -print -quit 2>/dev/null)"
   if [ -z "$GC_CONFIG" ]; then
-    GC_CONFIG="$HOME/.claude/RLM/configs/gc.json"
+    GC_CONFIG="$HOME/.claude/RLM/internal/gc-worker.json"
   fi
   LAUNCHER="$(dirname "$(dirname "$GC_CONFIG")")/launch.sh"
 fi
