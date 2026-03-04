@@ -1,0 +1,26 @@
+{
+  "name": "rlm-marketplace",
+  "owner": {
+    "name": "willbox858"
+  },
+  "metadata": {
+    "description": "Recursive Language Model plugin for Claude Code — large-context processing, documentation, planning, TDD implementation, and code quality analysis.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "rlm",
+      "source": "./",
+      "description": "Agentic workflow framework built on Recursive Language Models (RLM). 19 skills for large-context processing, documentation, planning, TDD implementation, and code quality analysis.",
+      "version": "1.0.0",
+      "author": {
+        "name": "willbox858"
+      },
+      "repository": "https://github.com/willbox858/rlm-plugin",
+      "license": "MIT",
+      "keywords": ["rlm", "large-context", "recursive", "documentation", "planning", "implementation", "tdd"],
+      "category": "productivity",
+      "tags": ["agents", "skills", "large-context", "recursive", "tdd"]
+    }
+  ]
+}
