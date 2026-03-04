@@ -1,0 +1,10 @@
+{
+  "test_command": "",
+  "build_command": "",
+  "lint_command": "",
+  "test_file_patterns": [],
+  "source_dirs": [],
+  "test_dirs": [],
+  "language": "",
+  "framework": ""
+}

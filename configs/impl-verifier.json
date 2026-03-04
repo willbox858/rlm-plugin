@@ -1,0 +1,11 @@
+{
+  "agent": "verifier",
+  "output_format": "json",
+  "json_schema": {
+    "type": "object",
+    "properties": { "result": { "type": "string" } },
+    "required": ["result"]
+  },
+  "stdin": "passthrough",
+  "env_defaults": {}
+}
