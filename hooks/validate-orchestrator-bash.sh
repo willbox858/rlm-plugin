@@ -1,7 +1,9 @@
 #!/bin/bash
 # Hook: Whitelist-based Bash validation for the implementation-orchestrator.
-# Only allows the specific command patterns the orchestrator legitimately needs.
-# Everything else is denied with a redirect to the appropriate worker.
+#
+# The orchestrator is an RLM-style agent that decomposes work into sub-agent
+# calls via launch.sh, runs verification commands, and tracks iteration state.
+# This hook ensures it stays in that role instead of doing implementation work.
 
 COMMAND=$(jq -r '.tool_input.command // empty' 2>/dev/null)
 
@@ -24,124 +26,54 @@ deny() {
 
 # Strip leading whitespace for matching
 TRIMMED=$(echo "$COMMAND" | sed 's/^[[:space:]]*//')
-
-# --- WHITELIST: Allow only these patterns ---
-
-# 1. Dispatching workers via launch.sh
-if echo "$COMMAND" | grep -qE 'bash\s+.*launch\.sh'; then
-  exit 0
-fi
-
-# 2. Running verification commands (eval with test/build/lint vars)
-if echo "$COMMAND" | grep -qE 'eval\s+"\$'; then
-  exit 0
-fi
-
-# 3. Git operations (add, commit)
-if echo "$COMMAND" | grep -qE '^\s*git\s+(add|commit)'; then
-  exit 0
-fi
-# Also allow git inside compound commands
-if echo "$COMMAND" | grep -qE 'git\s+(add|commit)' && ! echo "$COMMAND" | grep -qE 'git\s+(push|reset|checkout|rebase|merge)'; then
-  exit 0
-fi
-
-# 4. Parsing JSON results with jq
-if echo "$COMMAND" | grep -qE '^\s*jq\s'; then
-  exit 0
-fi
-if echo "$COMMAND" | grep -qE '\|\s*jq\s'; then
-  exit 0
-fi
-
-# 5. Changing to worktree directory
-if echo "$COMMAND" | grep -qE '^\s*cd\s'; then
-  exit 0
-fi
-
-# 6. Environment variable validation and control flow
-if echo "$COMMAND" | grep -qE '^\s*\['; then
-  exit 0
-fi
-if echo "$COMMAND" | grep -qE '^\s*(if|then|else|fi|for|do|done|while|case|esac)\b'; then
-  exit 0
-fi
-if echo "$COMMAND" | grep -qE '^\s*(export|unset)\s'; then
-  exit 0
-fi
-# Variable assignments (VAR=value or VAR=$(command))
-if echo "$TRIMMED" | grep -qE '^[A-Z_][A-Z0-9_]*='; then
-  exit 0
-fi
-
-# 7. Echo (logging)
-if echo "$COMMAND" | grep -qE '^\s*echo\s'; then
-  exit 0
-fi
-
-# 8. Reading/writing temp files only
-if echo "$COMMAND" | grep -qE '^\s*(cat|head|tail)\s+/tmp/'; then
-  exit 0
-fi
-
-# 9. File existence checks on specific paths (plan file, config, worktree)
-if echo "$COMMAND" | grep -qE '^\s*test\s'; then
-  exit 0
-fi
-
-# 10. Cleanup of temp files
-if echo "$COMMAND" | grep -qE '^\s*rm\s+-f\s+/tmp/'; then
-  exit 0
-fi
-
-# 11. mkdir for temp dirs
-if echo "$COMMAND" | grep -qE '^\s*mkdir\s'; then
-  exit 0
-fi
-
-# 12. wc (counting)
-if echo "$COMMAND" | grep -qE '^\s*wc\s'; then
-  exit 0
-fi
-
-# 13. find (config resolution fallback — locating plugin files)
-if echo "$COMMAND" | grep -qE '^\s*find\s'; then
-  exit 0
-fi
-# Also allow find in variable assignments like VAR=$(find ...)
-if echo "$COMMAND" | grep -qE 'find\s.*\.claude/RLM'; then
-  exit 0
-fi
-
-# 14. dirname/basename/realpath (path resolution)
-if echo "$COMMAND" | grep -qE '^\s*(dirname|basename|realpath)\s'; then
-  exit 0
-fi
-
-# 15. grep piped (parsing output, not codebase searching)
-if echo "$COMMAND" | grep -qE '\|\s*grep\s'; then
-  exit 0
-fi
-if echo "$COMMAND" | grep -qE '^\s*grep\s.*(/tmp/|EXIT_CODE|FAIL|ERROR|PASS)'; then
-  exit 0
-fi
-
-# 16. sed without -i (parsing/extracting, not editing files)
-if echo "$COMMAND" | grep -qE '^\s*sed\s' && ! echo "$COMMAND" | grep -qE 'sed\s+-i'; then
-  exit 0
-fi
-
-# 17. Multi-line compound commands that start with allowed patterns
-# Check if the first meaningful line matches an allowed pattern
 FIRST_LINE=$(echo "$COMMAND" | head -1 | sed 's/^[[:space:]]*//')
-if echo "$FIRST_LINE" | grep -qE '^(bash\s.*launch|eval\s|git\s|jq\s|cd\s|echo\s|\[|if\s|for\s|while\s|export\s|[A-Z_][A-Z0-9_]*=|cat\s+/tmp/|test\s|rm\s|mkdir\s|wc\s|find\s|dirname|sed\s|grep\s|\{)'; then
-  exit 0
-fi
 
-# 14. Braces for grouping and subshells
-if echo "$TRIMMED" | grep -qE '^\s*[\{\(]'; then
-  exit 0
-fi
+# --- WHITELIST ---
+# These are the things an RLM orchestrator legitimately does.
+
+# 1. Sub-agent calls via launch.sh (the core RLM pattern)
+echo "$COMMAND" | grep -qE 'launch\.sh' && exit 0
+
+# 2. Verification commands (eval with test/build/lint vars)
+echo "$COMMAND" | grep -qE 'eval\s+"?\$' && exit 0
+
+# 3. Git operations (commit progress after each iteration)
+echo "$COMMAND" | grep -qE 'git\s+(add|commit|status|diff|log)' && exit 0
+
+# 4. JSON parsing (reading sub-agent results)
+echo "$COMMAND" | grep -qE '(^|\|)\s*jq\s' && exit 0
+
+# 5. Working directory management
+echo "$COMMAND" | grep -qE '^\s*cd\s' && exit 0
+
+# 6. Shell control flow, variables, and environment
+echo "$TRIMMED" | grep -qE '^(if|then|else|fi|for|do|done|while|case|esac|export|unset)\b' && exit 0
+echo "$TRIMMED" | grep -qE '^\[' && exit 0
+echo "$TRIMMED" | grep -qE '^[A-Z_][A-Z0-9_]*=' && exit 0
+
+# 7. Logging
+echo "$COMMAND" | grep -qE '^\s*echo\s' && exit 0
+
+# 8. Temp file operations (reading results, writing intermediate state)
+echo "$COMMAND" | grep -qE '(cat|head|tail)\s+/tmp/' && exit 0
+echo "$COMMAND" | grep -qE '^\s*rm\s+-f\s+/tmp/' && exit 0
+echo "$COMMAND" | grep -qE '^\s*mkdir\s' && exit 0
+echo "$COMMAND" | grep -qE '^\s*test\s' && exit 0
+
+# 9. Output parsing utilities (wc, grep in pipes, sed without -i)
+echo "$COMMAND" | grep -qE '^\s*wc\s' && exit 0
+echo "$COMMAND" | grep -qE '\|\s*grep\s' && exit 0
+echo "$COMMAND" | grep -qE '^\s*grep\s.*(/tmp/|EXIT_CODE|FAIL|ERROR|PASS)' && exit 0
+echo "$COMMAND" | grep -qE '^\s*sed\s' && ! echo "$COMMAND" | grep -qE 'sed\s+-i' && exit 0
+
+# 10. Path resolution (finding configs)
+echo "$COMMAND" | grep -qE '^\s*(find|dirname|basename|realpath)\s' && exit 0
+
+# 11. Compound commands (first line matches an allowed pattern)
+echo "$FIRST_LINE" | grep -qE '^(bash\s|eval\s|git\s|jq\s|cd\s|echo\s|\[|if\s|for\s|while\s|export\s|[A-Z_][A-Z0-9_]*=|cat\s+/tmp/|test\s|rm\s|mkdir\s|wc\s|find\s|dirname|sed\s|grep\s|\{|\()' && exit 0
+
+# 12. Braces and subshells for grouping
+echo "$TRIMMED" | grep -qE '^\s*[\{\(]' && exit 0
 
 # --- DENY everything else ---
-deny "To explore or understand code, dispatch impl-worker or gc-worker via launch.sh — they have Read, Grep, and Glob and will report back. To write code, dispatch impl-worker. To write tests, dispatch impl-test-writer. Your job is to call launch.sh to dispatch workers and run eval for verification."
+deny "You are an RLM orchestrator — your job is to decompose work into sub-agent calls. To write or modify code, dispatch impl-worker via launch.sh. To write or fix tests, dispatch impl-test-writer. To analyze failures, dispatch impl-verifier. To scan the codebase, dispatch gc-worker. You call them with: bash \"\$RLM_ROOT/launch.sh\" <config> \"<prompt>\" [KEY=VALUE ...]"
