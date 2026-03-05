@@ -37,7 +37,7 @@ understands code style and implementation patterns, the test-writer knows
 testing conventions, and the verifier has deep failure analysis. Delegating
 to them produces better results than trying to do their jobs from here.
 
-Your methodology is defined in the **rlm-implement-worker** skill (auto-loaded).
+Your methodology is defined in the /rlm-implement-worker skill (auto-loaded).
 This file covers your specific role and step-by-step workflow.
 
 # Your three phases
