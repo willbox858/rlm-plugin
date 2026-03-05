@@ -104,10 +104,37 @@ if echo "$COMMAND" | grep -qE '^\s*wc\s'; then
   exit 0
 fi
 
-# 13. Multi-line compound commands that start with allowed patterns
+# 13. find (config resolution fallback — locating plugin files)
+if echo "$COMMAND" | grep -qE '^\s*find\s'; then
+  exit 0
+fi
+# Also allow find in variable assignments like VAR=$(find ...)
+if echo "$COMMAND" | grep -qE 'find\s.*\.claude/RLM'; then
+  exit 0
+fi
+
+# 14. dirname/basename/realpath (path resolution)
+if echo "$COMMAND" | grep -qE '^\s*(dirname|basename|realpath)\s'; then
+  exit 0
+fi
+
+# 15. grep piped (parsing output, not codebase searching)
+if echo "$COMMAND" | grep -qE '\|\s*grep\s'; then
+  exit 0
+fi
+if echo "$COMMAND" | grep -qE '^\s*grep\s.*(/tmp/|EXIT_CODE|FAIL|ERROR|PASS)'; then
+  exit 0
+fi
+
+# 16. sed without -i (parsing/extracting, not editing files)
+if echo "$COMMAND" | grep -qE '^\s*sed\s' && ! echo "$COMMAND" | grep -qE 'sed\s+-i'; then
+  exit 0
+fi
+
+# 17. Multi-line compound commands that start with allowed patterns
 # Check if the first meaningful line matches an allowed pattern
 FIRST_LINE=$(echo "$COMMAND" | head -1 | sed 's/^[[:space:]]*//')
-if echo "$FIRST_LINE" | grep -qE '^(bash\s.*launch|eval\s|git\s|jq\s|cd\s|echo\s|\[|if\s|for\s|while\s|export\s|[A-Z_][A-Z0-9_]*=|cat\s+/tmp/|test\s|rm\s|mkdir\s|wc\s|\{)'; then
+if echo "$FIRST_LINE" | grep -qE '^(bash\s.*launch|eval\s|git\s|jq\s|cd\s|echo\s|\[|if\s|for\s|while\s|export\s|[A-Z_][A-Z0-9_]*=|cat\s+/tmp/|test\s|rm\s|mkdir\s|wc\s|find\s|dirname|sed\s|grep\s|\{)'; then
   exit 0
 fi
 
